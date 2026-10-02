@@ -43,7 +43,7 @@ export const MobileFormView: React.FC<Props> = ({ state, updateState }) => {
     const handleAddMonth = () => {
         const currentBanner = state.banners?.[state.template] || { image: null, zoom: 1, x: 0, y: 0, showBanner: true };
         const maxMonths = currentBanner.showBanner === false ? 4 : 3;
-        if (state.template === 'acomodadores' && state.months.length >= maxMonths) return;
+        if ((state.template === 'acomodadores' || state.template === 'fin-de-semana') && state.months.length >= maxMonths) return;
 
         let nextYear = new Date().getFullYear();
         let nextMonthIndex = new Date().getMonth();
@@ -65,7 +65,8 @@ export const MobileFormView: React.FC<Props> = ({ state, updateState }) => {
             selectedDays: [],
             weeks: Array.from({ length: 5 }).map(() => ({
                 id: crypto.randomUUID(),
-                door: '', auditorium: '', mic1: '', mic2: '', group: ''
+                door: '', auditorium: '', mic1: '', mic2: '', group: '',
+                president: '', speaker: '', wtTheme: '', reader: ''
             }))
         };
         updateState({ months: [...state.months, newMonth] });
@@ -88,7 +89,7 @@ export const MobileFormView: React.FC<Props> = ({ state, updateState }) => {
         const month = state.months.find(m => m.id === monthId);
         if (!month) return;
         updateMonth(monthId, {
-            weeks: [...month.weeks, { id: crypto.randomUUID(), door: '', auditorium: '', mic1: '', mic2: '', group: '' }]
+            weeks: [...month.weeks, { id: crypto.randomUUID(), door: '', auditorium: '', mic1: '', mic2: '', group: '', president: '', speaker: '', wtTheme: '', reader: '' }]
         });
     };
 
@@ -120,7 +121,7 @@ export const MobileFormView: React.FC<Props> = ({ state, updateState }) => {
                     <label className="block text-xs font-bold text-zinc-500 uppercase mb-2">Título del PDF</label>
                     <input
                         type="text"
-                        value={state.styles.documentTitle ?? (state.template === 'acomodadores' ? t.previewTitleUshers : t.previewTitleCleaning)}
+                        value={state.styles.documentTitle ?? (state.template === 'acomodadores' ? t.previewTitleUshers : state.template === 'aseo' ? t.previewTitleCleaning : t.previewTitleWeekend)}
                         onChange={(e) => updateState({ styles: { ...state.styles, documentTitle: e.target.value } })}
                         className="w-full bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl p-3 text-base text-zinc-900 dark:text-zinc-100"
                         placeholder="Programa de..."
@@ -279,7 +280,7 @@ export const MobileFormView: React.FC<Props> = ({ state, updateState }) => {
                                                                 </div>
                                                             </div>
                                                         </>
-                                                    ) : (
+                                                    ) : state.template === 'aseo' ? (
                                                         <div className="flex flex-col">
                                                             <label className="text-[10px] font-bold text-zinc-500 uppercase mb-1">{t.assignedGroup}</label>
                                                             <input
@@ -289,6 +290,44 @@ export const MobileFormView: React.FC<Props> = ({ state, updateState }) => {
                                                                 className="w-full bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg p-3 text-base text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:ring-2 focus:ring-primary/20 outline-none" placeholder="Grupo..."
                                                             />
                                                         </div>
+                                                    ) : (
+                                                        <>
+                                                            <div className="flex flex-col">
+                                                                <label className="text-[10px] font-bold text-zinc-500 uppercase mb-1">{t.president}</label>
+                                                                <input
+                                                                    type="text" list="name-suggestions" value={week.president || ''}
+                                                                    onChange={(e) => updateWeekField(month.id, week.id, 'president', e.target.value)}
+                                                                    onBlur={(e) => addName(e.target.value)}
+                                                                    className="w-full bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg p-3 text-base text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:ring-2 focus:ring-primary/20 outline-none" placeholder="Nombre..."
+                                                                />
+                                                            </div>
+                                                            <div className="flex flex-col">
+                                                                <label className="text-[10px] font-bold text-zinc-500 uppercase mb-1">{t.speaker}</label>
+                                                                <input
+                                                                    type="text" list="name-suggestions" value={week.speaker || ''}
+                                                                    onChange={(e) => updateWeekField(month.id, week.id, 'speaker', e.target.value)}
+                                                                    onBlur={(e) => addName(e.target.value)}
+                                                                    className="w-full bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg p-3 text-base text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:ring-2 focus:ring-primary/20 outline-none" placeholder="Nombre..."
+                                                                />
+                                                            </div>
+                                                            <div className="flex flex-col">
+                                                                <label className="text-[10px] font-bold text-zinc-500 uppercase mb-1">{t.wtTheme}</label>
+                                                                <input
+                                                                    type="text" value={week.wtTheme || ''}
+                                                                    onChange={(e) => updateWeekField(month.id, week.id, 'wtTheme', e.target.value)}
+                                                                    className="w-full bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg p-3 text-base text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:ring-2 focus:ring-primary/20 outline-none" placeholder="Tema..."
+                                                                />
+                                                            </div>
+                                                            <div className="flex flex-col">
+                                                                <label className="text-[10px] font-bold text-zinc-500 uppercase mb-1">{t.reader}</label>
+                                                                <input
+                                                                    type="text" list="name-suggestions" value={week.reader || ''}
+                                                                    onChange={(e) => updateWeekField(month.id, week.id, 'reader', e.target.value)}
+                                                                    onBlur={(e) => addName(e.target.value)}
+                                                                    className="w-full bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg p-3 text-base text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:ring-2 focus:ring-primary/20 outline-none" placeholder="Nombre..."
+                                                                />
+                                                            </div>
+                                                        </>
                                                     )}
                                                 </div>
                                             </div>
@@ -304,7 +343,7 @@ export const MobileFormView: React.FC<Props> = ({ state, updateState }) => {
             {/* Add Month Button */}
             <button
                 onClick={handleAddMonth}
-                disabled={state.template === 'acomodadores' && state.months.length >= ((state.banners?.[state.template]?.showBanner === false) ? 4 : 3)}
+                disabled={(state.template === 'acomodadores' || state.template === 'fin-de-semana') && state.months.length >= ((state.banners?.[state.template]?.showBanner === false) ? 4 : 3)}
                 className="w-full py-4 rounded-2xl border-2 border-dashed border-zinc-300 dark:border-zinc-700 text-zinc-500 dark:text-zinc-400 font-bold flex items-center justify-center gap-2 disabled:opacity-50 active:bg-zinc-50 dark:active:bg-zinc-800"
             >
                 <Plus size={20} />

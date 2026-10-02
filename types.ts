@@ -1,6 +1,6 @@
 export type Language = 'es' | 'en' | 'pt' | 'fr' | 'it' | 'ru' | 'pl';
 
-export type TemplateType = 'acomodadores' | 'aseo'; // Extendable
+export type TemplateType = 'acomodadores' | 'aseo' | 'fin-de-semana'; // Extendable
 
 export interface StyleConfig {
   fontFamily: string;
@@ -29,6 +29,11 @@ export interface WeekData {
   mic1: string;
   mic2: string;
   group: string; // For cleaning
+  // For weekend meeting
+  president?: string;
+  speaker?: string;
+  wtTheme?: string;
+  reader?: string;
   isAssembly?: boolean; // True if this week is reserved for an assembly
 }
 

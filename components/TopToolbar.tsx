@@ -69,7 +69,7 @@ export const TopToolbar: React.FC<Props> = ({ state, updateState, updateStyle, o
     const addWeek = (monthId: string) => {
         const month = state.months.find(m => m.id === monthId);
         if (!month) return;
-        updateMonth(monthId, { weeks: [...month.weeks, { id: crypto.randomUUID(), door: '', auditorium: '', mic1: '', mic2: '', group: '' }] });
+        updateMonth(monthId, { weeks: [...month.weeks, { id: crypto.randomUUID(), door: '', auditorium: '', mic1: '', mic2: '', group: '', president: '', speaker: '', wtTheme: '', reader: '' }] });
     };
 
     const removeWeek = (monthId: string, weekId: string) => {
@@ -141,7 +141,7 @@ export const TopToolbar: React.FC<Props> = ({ state, updateState, updateStyle, o
     const handleAddMonth = () => {
         const currentBanner = state.banners?.[state.template] || { image: null, zoom: 1, x: 0, y: 0, showBanner: true };
         const maxMonths = currentBanner.showBanner === false ? 4 : 3;
-        if (state.template === 'acomodadores' && state.months.length >= maxMonths) {
+        if ((state.template === 'acomodadores' || state.template === 'fin-de-semana') && state.months.length >= maxMonths) {
             alert(t.maxMonthsAcomodadoresLimit || "Límite alcanzado");
             return;
         }
@@ -167,7 +167,8 @@ export const TopToolbar: React.FC<Props> = ({ state, updateState, updateStyle, o
             selectedDays: [],
             weeks: Array.from({ length: 5 }).map(() => ({
                 id: crypto.randomUUID(),
-                door: '', auditorium: '', mic1: '', mic2: '', group: ''
+                door: '', auditorium: '', mic1: '', mic2: '', group: '',
+                president: '', speaker: '', wtTheme: '', reader: ''
             }))
         };
         updateState({ months: [...state.months, newMonth] });
@@ -203,7 +204,7 @@ export const TopToolbar: React.FC<Props> = ({ state, updateState, updateStyle, o
                 >
                     <LayoutTemplate size={14} className="text-zinc-400 shrink-0" />
                     <span className="hidden lg:block max-w-[80px] xl:max-w-[100px] truncate text-[11px] xl:text-[12px]">
-                        {state.template === 'acomodadores' ? t.templateUshers : t.templateCleaning}
+                        {state.template === 'acomodadores' ? t.templateUshers : state.template === 'aseo' ? t.templateCleaning : t.templateWeekend}
                     </span>
                     <ChevronDown size={12} className={`text-zinc-400 transition-transform duration-200 ${isTemplateMenuOpen ? 'rotate-180' : ''}`} />
                 </button>
@@ -390,6 +391,7 @@ export const TopToolbar: React.FC<Props> = ({ state, updateState, updateStyle, o
                     {[
                         { id: 'acomodadores', label: t.templateUshers },
                         { id: 'aseo', label: t.templateCleaning },
+                        { id: 'fin-de-semana', label: t.templateWeekend },
                     ].map(item => (
                         <button
                             key={item.id}

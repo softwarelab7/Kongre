@@ -64,7 +64,7 @@ export const ContentControl: React.FC<Props> = ({ state, updateState }) => {
   const handleAddMonth = () => {
     const currentBanner = state.banners?.[state.template] || { image: null, zoom: 1, x: 0, y: 0, showBanner: true };
     const maxMonths = currentBanner.showBanner === false ? 4 : 3;
-    if (state.template === 'acomodadores' && state.months.length >= maxMonths) {
+    if ((state.template === 'acomodadores' || state.template === 'fin-de-semana') && state.months.length >= maxMonths) {
       return;
     }
 
@@ -94,7 +94,11 @@ export const ContentControl: React.FC<Props> = ({ state, updateState }) => {
         auditorium: '',
         mic1: '',
         mic2: '',
-        group: ''
+        group: '',
+        president: '',
+        speaker: '',
+        wtTheme: '',
+        reader: ''
       }))
     };
     updateState({ months: [...state.months, newMonth] });
@@ -138,7 +142,11 @@ export const ContentControl: React.FC<Props> = ({ state, updateState }) => {
       auditorium: '',
       mic1: '',
       mic2: '',
-      group: ''
+      group: '',
+      president: '',
+      speaker: '',
+      wtTheme: '',
+      reader: ''
     };
     updateMonth(monthId, { weeks: [...month.weeks, newWeek] });
   };
@@ -174,7 +182,8 @@ export const ContentControl: React.FC<Props> = ({ state, updateState }) => {
             <Select
               options={[
                 { value: 'acomodadores', label: t.templateUshers },
-                { value: 'aseo', label: t.templateCleaning }
+                { value: 'aseo', label: t.templateCleaning },
+                { value: 'fin-de-semana', label: t.templateWeekend }
               ]}
               value={state.template}
               onChange={(value) => updateState({ template: value as TemplateType })}
@@ -393,7 +402,7 @@ export const ContentControl: React.FC<Props> = ({ state, updateState }) => {
             {(() => {
               const currentBanner = state.banners?.[state.template] || { image: null, zoom: 1, x: 0, y: 0, showBanner: true };
               const maxMonths = currentBanner.showBanner === false ? 4 : 3;
-              const isLimitReached = state.template === 'acomodadores' && state.months.length >= maxMonths;
+              const isLimitReached = (state.template === 'acomodadores' || state.template === 'fin-de-semana') && state.months.length >= maxMonths;
               
               return (
                 <>

@@ -21,7 +21,11 @@ export default function App() {
 
   const [state, setState] = useState<AppState>(() => {
     const initialBanner = { image: null, zoom: 1, x: 0, y: 0, showBanner: true };
-    const defaultBanners = { acomodadores: { ...initialBanner }, aseo: { ...initialBanner } };
+    const defaultBanners = { 
+      acomodadores: { ...initialBanner }, 
+      aseo: { ...initialBanner },
+      'fin-de-semana': { ...initialBanner }
+    };
 
     const saved = typeof window !== 'undefined' ? localStorage.getItem('HUB_TEOCRATICO_STATE_V1') : null;
     if (saved) {
@@ -32,7 +36,8 @@ export default function App() {
         if (parsed.banner && !parsed.banners) {
           parsed.banners = { 
             acomodadores: { ...parsed.banner }, 
-            aseo: { ...initialBanner } 
+            aseo: { ...initialBanner },
+            'fin-de-semana': { ...initialBanner }
           };
           delete parsed.banner;
         }
@@ -106,7 +111,8 @@ export default function App() {
           selectedDays: [],
           weeks: Array.from({ length: 5 }).map(() => ({
             id: crypto.randomUUID(),
-            door: '', auditorium: '', mic1: '', mic2: '', group: ''
+            door: '', auditorium: '', mic1: '', mic2: '', group: '',
+            president: '', speaker: '', wtTheme: '', reader: ''
           }))
         }]
       }));
@@ -121,7 +127,11 @@ export default function App() {
       const finalUpdates = { ...updates };
       if ((updates as any).banner) {
         const activeTemplate = (updates.template as any) || prev.template;
-        const currentBanners = prev.banners || { acomodadores: { image: null, zoom: 1, x: 0, y: 0, showBanner: true }, aseo: { image: null, zoom: 1, x: 0, y: 0, showBanner: true } };
+        const currentBanners = prev.banners || { 
+          acomodadores: { image: null, zoom: 1, x: 0, y: 0, showBanner: true }, 
+          aseo: { image: null, zoom: 1, x: 0, y: 0, showBanner: true },
+          'fin-de-semana': { image: null, zoom: 1, x: 0, y: 0, showBanner: true }
+        };
         finalUpdates.banners = {
           ...currentBanners,
           [activeTemplate]: (updates as any).banner
@@ -134,7 +144,7 @@ export default function App() {
       const currentBannerState = newState.banners?.[newState.template] || { image: null, zoom: 1, x: 0, y: 0, showBanner: true };
       const maxMonths = currentBannerState.showBanner === false ? 4 : 3;
 
-      if (newState.template === 'acomodadores' && newState.months.length > maxMonths) {
+      if ((newState.template === 'acomodadores' || newState.template === 'fin-de-semana') && newState.months.length > maxMonths) {
         newState.months = newState.months.slice(0, maxMonths);
       }
       return newState;
@@ -162,11 +172,16 @@ export default function App() {
         selectedDays: [],
         weeks: Array.from({ length: 5 }).map(() => ({
           id: crypto.randomUUID(),
-          door: '', auditorium: '', mic1: '', mic2: '', group: ''
+          door: '', auditorium: '', mic1: '', mic2: '', group: '',
+          president: '', speaker: '', wtTheme: '', reader: ''
         }))
       }],
       styles: INITIAL_STYLES,
-      banners: { acomodadores: { ...initialBanner }, aseo: { ...initialBanner } },
+      banners: { 
+        acomodadores: { ...initialBanner }, 
+        aseo: { ...initialBanner },
+        'fin-de-semana': { ...initialBanner }
+      },
       language: 'es',
       theme: typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light',
       colorTheme: 'blue'
