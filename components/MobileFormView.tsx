@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { AppState, MonthData, TemplateType, WeekData } from '../types';
 import { TRANSLATIONS, getMonthName } from '../constants';
-import { ChevronDown, Trash2, Plus, CalendarDays } from 'lucide-react';
+import { ChevronDown, Trash2, Plus, CalendarDays, BookOpen } from 'lucide-react';
 import { Select } from './Select';
 import { useNameHistory } from '../hooks/useNameHistory';
+import { populateWatchtowerThemesForMonth, populateWatchtowerThemesForAllMonths } from '../services/watchtowerService';
 
 interface Props {
     state: AppState;
@@ -40,7 +41,7 @@ export const MobileFormView: React.FC<Props> = ({ state, updateState }) => {
         setOpenMonths(prev => ({ ...prev, [id]: !prev[id] }));
     };
 
-    const handleAddMonth = () => {
+    const handleAddMonth = async () => {
         const currentBanner = state.banners?.[state.template] || { image: null, zoom: 1, x: 0, y: 0, showBanner: true };
         const maxMonths = currentBanner.showBanner === false ? 4 : 3;
         if ((state.template === 'acomodadores' || state.template === 'fin-de-semana') && state.months.length >= maxMonths) return;
@@ -58,7 +59,7 @@ export const MobileFormView: React.FC<Props> = ({ state, updateState }) => {
             }
         }
 
-        const newMonth: MonthData = {
+        let newMonth: MonthData = {
             id: crypto.randomUUID(),
             year: nextYear,
             monthIndex: nextMonthIndex,
@@ -69,12 +70,27 @@ export const MobileFormView: React.FC<Props> = ({ state, updateState }) => {
                 president: '', speaker: '', wtTheme: '', reader: ''
             }))
         };
+
+        if (state.template === 'fin-de-semana') {
+            newMonth = await populateWatchtowerThemesForMonth(newMonth, state.language, true);
+        }
+
         updateState({ months: [...state.months, newMonth] });
         setOpenMonths(prev => ({ ...prev, [newMonth.id]: true }));
     };
 
     const removeMonth = (id: string) => updateState({ months: state.months.filter(m => m.id !== id) });
-    const updateMonth = (id: string, updates: Partial<MonthData>) => updateState({ months: state.months.map(m => m.id === id ? { ...m, ...updates } : m) });
+    const updateMonth = async (id: string, updates: Partial<MonthData>) => {
+        let newMonths = state.months.map(m => m.id === id ? { ...m, ...updates } : m);
+        if (state.template === 'fin-de-semana' && (updates.monthIndex !== undefined || updates.year !== undefined || updates.selectedDays !== undefined)) {
+            const targetMonth = newMonths.find(m => m.id === id);
+            if (targetMonth) {
+                const populated = await populateWatchtowerThemesForMonth(targetMonth, state.language, true);
+                newMonths = newMonths.map(m => m.id === id ? populated : m);
+            }
+        }
+        updateState({ months: newMonths });
+    };
 
     const toggleDay = (monthId: string, dayIndex: number) => {
         const month = state.months.find(m => m.id === monthId);
@@ -204,9 +220,24 @@ export const MobileFormView: React.FC<Props> = ({ state, updateState }) => {
                             <div className="space-y-4 pt-2">
                                 <div className="flex items-center justify-between mb-2">
                                     <h4 className="font-bold text-zinc-700 dark:text-zinc-300 uppercase tracking-wide text-sm">Asignaciones por Semana</h4>
-                                    <button onClick={() => addWeek(month.id)} className="text-primary font-bold text-xs flex items-center bg-primary/10 px-3 py-1.5 rounded-lg active:bg-primary/20">
-                                        <Plus size={14} className="mr-1" /> Añadir Semana
-                                    </button>
+                                    <div className="flex items-center gap-2">
+                                        {state.template === 'fin-de-semana' && (
+                                            <button
+                                                onClick={async () => {
+                                                    const populated = await populateWatchtowerThemesForMonth(month, state.language, true);
+                                                    updateMonth(month.id, populated);
+                                                }}
+                                                className="text-xs font-bold flex items-center gap-1 bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800 px-2.5 py-1.5 rounded-lg active:scale-95 transition-all"
+                                                title={t.loadWatchtowerThemes}
+                                            >
+                                                <BookOpen size={13} />
+                                                <span>Temas</span>
+                                            </button>
+                                        )}
+                                        <button onClick={() => addWeek(month.id)} className="text-primary font-bold text-xs flex items-center bg-primary/10 px-3 py-1.5 rounded-lg active:bg-primary/20">
+                                            <Plus size={14} className="mr-1" /> Añadir Semana
+                                        </button>
+                                    </div>
                                 </div>
 
                                 {month.weeks.length === 0 ? (

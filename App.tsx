@@ -8,6 +8,7 @@ import { UpdatePopup } from './components/UpdatePopup';
 import { TopToolbar } from './components/TopToolbar';
 import { MobileBottomToolbar } from './components/MobileBottomToolbar';
 import { MobileFormView } from './components/MobileFormView';
+import { populateWatchtowerThemesForAllMonths, populateWatchtowerThemesForMonth } from './services/watchtowerService';
 
 export default function App() {
   const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
@@ -102,22 +103,69 @@ export default function App() {
 
   useEffect(() => {
     if (state.months.length === 0) {
-      setState(prev => ({
-        ...prev,
-        months: [{
+      const initialMonth = {
+        id: crypto.randomUUID(),
+        year: new Date().getFullYear(),
+        monthIndex: new Date().getMonth(),
+        selectedDays: [],
+        weeks: Array.from({ length: 5 }).map(() => ({
           id: crypto.randomUUID(),
-          year: new Date().getFullYear(),
-          monthIndex: new Date().getMonth(),
-          selectedDays: [],
-          weeks: Array.from({ length: 5 }).map(() => ({
-            id: crypto.randomUUID(),
-            door: '', auditorium: '', mic1: '', mic2: '', group: '',
-            president: '', speaker: '', wtTheme: '', reader: ''
-          }))
-        }]
-      }));
+          door: '', auditorium: '', mic1: '', mic2: '', group: '',
+          president: '', speaker: '', wtTheme: '', reader: ''
+        }))
+      };
+      if (state.template === 'fin-de-semana') {
+        populateWatchtowerThemesForMonth(initialMonth, state.language, false).then(m => {
+          setState(prev => ({ ...prev, months: [m] }));
+        });
+      } else {
+        setState(prev => ({ ...prev, months: [initialMonth] }));
+      }
     }
   }, []);
+
+  // Auto-populate Watchtower study themes when in 'fin-de-semana' template
+  const isPopulatingThemesRef = React.useRef(false);
+  useEffect(() => {
+    if (state.template !== 'fin-de-semana' || isPopulatingThemesRef.current) return;
+
+    const hasEmptyTheme = state.months.some(m =>
+      m.weeks.some(w => !w.isAssembly && (!w.wtTheme || w.wtTheme.trim() === ''))
+    );
+
+    if (!hasEmptyTheme) return;
+
+    isPopulatingThemesRef.current = true;
+    let isCancelled = false;
+
+    populateWatchtowerThemesForAllMonths(state.months, state.language, false)
+      .then(newMonths => {
+        if (isCancelled) return;
+        let hasChanges = false;
+        for (let i = 0; i < newMonths.length; i++) {
+          const origMonth = state.months[i];
+          if (!origMonth) continue;
+          for (let j = 0; j < newMonths[i].weeks.length; j++) {
+            if (newMonths[i].weeks[j].wtTheme !== origMonth.weeks[j]?.wtTheme) {
+              hasChanges = true;
+              break;
+            }
+          }
+          if (hasChanges) break;
+        }
+
+        if (hasChanges) {
+          setState(prev => ({ ...prev, months: newMonths }));
+        }
+      })
+      .finally(() => {
+        isPopulatingThemesRef.current = false;
+      });
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [state.template, state.months, state.language]);
 
   const t = TRANSLATIONS[state.language];
 

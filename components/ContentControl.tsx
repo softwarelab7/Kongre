@@ -3,6 +3,7 @@ import { AppState, MonthData, TemplateType, WeekData } from '../types';
 import { TRANSLATIONS, getMonthName } from '../constants';
 import { PlusCircle, Trash2, ChevronDown, ChevronUp, Upload, Plus, Check } from 'lucide-react';
 import { Select } from './Select';
+import { populateWatchtowerThemesForMonth } from '../services/watchtowerService';
 
 interface Props {
   state: AppState;
@@ -83,7 +84,7 @@ export const ContentControl: React.FC<Props> = ({ state, updateState }) => {
       }
     }
 
-    const newMonth: MonthData = {
+    let newMonth: MonthData = {
       id: crypto.randomUUID(),
       year: nextYear,
       monthIndex: nextMonthIndex,
@@ -101,6 +102,11 @@ export const ContentControl: React.FC<Props> = ({ state, updateState }) => {
         reader: ''
       }))
     };
+
+    if (state.template === 'fin-de-semana') {
+      newMonth = await populateWatchtowerThemesForMonth(newMonth, state.language, true);
+    }
+
     updateState({ months: [...state.months, newMonth] });
   };
 
@@ -108,10 +114,16 @@ export const ContentControl: React.FC<Props> = ({ state, updateState }) => {
     updateState({ months: state.months.filter(m => m.id !== id) });
   };
 
-  const updateMonth = (id: string, updates: Partial<MonthData>) => {
-    updateState({
-      months: state.months.map(m => m.id === id ? { ...m, ...updates } : m)
-    });
+  const updateMonth = async (id: string, updates: Partial<MonthData>) => {
+    let newMonths = state.months.map(m => m.id === id ? { ...m, ...updates } : m);
+    if (state.template === 'fin-de-semana' && (updates.monthIndex !== undefined || updates.year !== undefined || updates.selectedDays !== undefined)) {
+      const targetMonth = newMonths.find(m => m.id === id);
+      if (targetMonth) {
+        const populated = await populateWatchtowerThemesForMonth(targetMonth, state.language, true);
+        newMonths = newMonths.map(m => m.id === id ? populated : m);
+      }
+    }
+    updateState({ months: newMonths });
   };
 
   const toggleDay = (monthId: string, dayIndex: number) => {

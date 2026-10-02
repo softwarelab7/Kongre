@@ -99,6 +99,9 @@ export const TRANSLATIONS = {
     noDatesTitle: "No se generaron fechas",
     noDatesDesc: "Selecciona los días de la semana en los ajustes del mes (⚙️) para generar automáticamente las filas del programa.",
     assembly: "ASAMBLEA",
+    loadWatchtowerThemes: "Cargar Temas de La Atalaya",
+    loadingThemes: "Cargando temas...",
+    themesLoaded: "Temas de La Atalaya cargados con éxito",
   },
   en: {
     appTitle: "Hub Teocrático JW",
@@ -146,6 +149,9 @@ export const TRANSLATIONS = {
     noDatesTitle: "No dates generated",
     noDatesDesc: "Select days of the week in the month settings (⚙️) to automatically generate the schedule rows.",
     assembly: "ASSEMBLY",
+    loadWatchtowerThemes: "Load Watchtower Themes",
+    loadingThemes: "Loading themes...",
+    themesLoaded: "Watchtower themes loaded successfully",
   },
   pt: {
     appTitle: "Hub Teocrático JW",
@@ -193,6 +199,9 @@ export const TRANSLATIONS = {
     noDatesTitle: "Nenhuma data gerada",
     noDatesDesc: "Selecione os dias da semana nas configurações do mês (⚙️) para gerar automaticamente as linhas da programação.",
     assembly: "ASSEMBLEIA",
+    loadWatchtowerThemes: "Carregar Temas de A Sentinela",
+    loadingThemes: "Carregando temas...",
+    themesLoaded: "Temas de A Sentinela carregados com sucesso",
   },
   fr: {
     appTitle: "Hub Teocrático JW",
@@ -240,6 +249,9 @@ export const TRANSLATIONS = {
     noDatesTitle: "Aucune date générée",
     noDatesDesc: "Sélectionnez les jours de la semana dans les paramètres du mois (⚙️) pour générer automatiquement les lignes du programme.",
     assembly: "ASSEMBLÉE",
+    loadWatchtowerThemes: "Charger les thèmes de La Tour de Garde",
+    loadingThemes: "Chargement des thèmes...",
+    themesLoaded: "Thèmes de La Tour de Garde chargés avec succès",
   },
   it: {
     appTitle: "Hub Teocrático JW",
@@ -287,6 +299,9 @@ export const TRANSLATIONS = {
     noDatesTitle: "Nessuna data generata",
     noDatesDesc: "Seleziona i giorni della settimana nelle impostazioni del mese (⚙️) per generare automaticamente le righe del programma.",
     assembly: "ASSEMBLEA",
+    loadWatchtowerThemes: "Carica temi della Torre di Guardia",
+    loadingThemes: "Caricamento temi...",
+    themesLoaded: "Temi della Torre di Guardia caricati con successo",
   },
   ru: {
     appTitle: "Hub Teocrático JW",
@@ -334,6 +349,9 @@ export const TRANSLATIONS = {
     noDatesTitle: "Даты не созданы",
     noDatesDesc: "Выберите дни недели в настройках месяца (⚙️), чтобы автоматически создать строки расписания.",
     assembly: "КОНГРЕСС",
+    loadWatchtowerThemes: "Загрузить темы Сторожевой Башни",
+    loadingThemes: "Загрузка тем...",
+    themesLoaded: "Темы Сторожевой Башни успешно загружены",
   },
   pl: {
     appTitle: "Hub Teocrático JW",
@@ -381,6 +399,9 @@ export const TRANSLATIONS = {
     noDatesTitle: "Nie wygenerowano dat",
     noDatesDesc: "Wybierz dni tygodnia w ustawieniach miesiąca (⚙️), aby automatycznie wygenerować wiersze harmonogramu.",
     assembly: "ZGROMADZENIE",
+    loadWatchtowerThemes: "Wczytaj tematy Strażnicy",
+    loadingThemes: "Wczytywanie tematów...",
+    themesLoaded: "Pomyślnie załadowano tematy Strażnicy",
   }
 };
 

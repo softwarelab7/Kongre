@@ -2,7 +2,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { AppState, StyleConfig } from '../types';
 import { TRANSLATIONS, FONTS } from '../constants';
-import { Download, Palette, Upload, Trash2, Check, ChevronDown, Bold, Italic, Underline, CaseUpper, Plus, Minus, LayoutTemplate, Image as ImageIcon, Settings } from 'lucide-react';
+import { Download, Palette, Upload, Trash2, Check, ChevronDown, Bold, Italic, Underline, CaseUpper, Plus, Minus, LayoutTemplate, Image as ImageIcon, Settings, BookOpen } from 'lucide-react';
+import { populateWatchtowerThemesForMonth, populateWatchtowerThemesForAllMonths } from '../services/watchtowerService';
 
 interface Props {
     state: AppState;
@@ -54,8 +55,32 @@ export const TopToolbar: React.FC<Props> = ({ state, updateState, updateStyle, o
         return name.charAt(0).toUpperCase() + name.slice(1);
     };
 
+    const [isLoadingThemes, setIsLoadingThemes] = useState(false);
+
+    const handleSyncWatchtowerThemes = async () => {
+        setIsLoadingThemes(true);
+        try {
+            const updated = await populateWatchtowerThemesForAllMonths(state.months, state.language, true);
+            updateState({ months: updated });
+        } catch (e) {
+            console.error("Error populating Watchtower themes:", e);
+        } finally {
+            setIsLoadingThemes(false);
+        }
+    };
+
     const removeMonth = (id: string) => updateState({ months: state.months.filter(m => m.id !== id) });
-    const updateMonth = (id: string, updates: any) => updateState({ months: state.months.map(m => m.id === id ? { ...m, ...updates } : m) });
+    const updateMonth = async (id: string, updates: any) => {
+        let newMonths = state.months.map(m => m.id === id ? { ...m, ...updates } : m);
+        if (state.template === 'fin-de-semana' && (updates.monthIndex !== undefined || updates.year !== undefined || updates.selectedDays !== undefined)) {
+            const targetMonth = newMonths.find(m => m.id === id);
+            if (targetMonth) {
+                const populated = await populateWatchtowerThemesForMonth(targetMonth, state.language, true);
+                newMonths = newMonths.map(m => m.id === id ? populated : m);
+            }
+        }
+        updateState({ months: newMonths });
+    };
     
     const toggleDay = (monthId: string, dayIndex: number) => {
         const month = state.months.find(m => m.id === monthId);
@@ -138,7 +163,7 @@ export const TopToolbar: React.FC<Props> = ({ state, updateState, updateStyle, o
         }
     };
 
-    const handleAddMonth = () => {
+    const handleAddMonth = async () => {
         const currentBanner = state.banners?.[state.template] || { image: null, zoom: 1, x: 0, y: 0, showBanner: true };
         const maxMonths = currentBanner.showBanner === false ? 4 : 3;
         if ((state.template === 'acomodadores' || state.template === 'fin-de-semana') && state.months.length >= maxMonths) {
@@ -160,7 +185,7 @@ export const TopToolbar: React.FC<Props> = ({ state, updateState, updateStyle, o
             }
         }
 
-        const newMonth = {
+        let newMonth = {
             id: crypto.randomUUID(),
             year: nextYear,
             monthIndex: nextMonthIndex,
@@ -171,6 +196,11 @@ export const TopToolbar: React.FC<Props> = ({ state, updateState, updateStyle, o
                 president: '', speaker: '', wtTheme: '', reader: ''
             }))
         };
+
+        if (state.template === 'fin-de-semana') {
+            newMonth = await populateWatchtowerThemesForMonth(newMonth, state.language, true);
+        }
+
         updateState({ months: [...state.months, newMonth] });
     };
 
@@ -379,6 +409,21 @@ export const TopToolbar: React.FC<Props> = ({ state, updateState, updateStyle, o
                     <Plus size={13} strokeWidth={2.5} />
                     <span className="hidden sm:inline-block">{t.createNewMonth || "AÑADIR MES"}</span>
                 </button>
+
+                {state.template === 'fin-de-semana' && (
+                    <>
+                        <div className="w-px h-5 bg-zinc-200 dark:bg-zinc-700 mx-1 shrink-0" />
+                        <button
+                            onClick={handleSyncWatchtowerThemes}
+                            disabled={isLoadingThemes}
+                            className="flex items-center gap-1.5 h-7 px-2.5 rounded bg-blue-50 hover:bg-blue-100 dark:bg-blue-950/40 dark:hover:bg-blue-900/60 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800 transition-all font-bold text-[10px] uppercase shrink-0 shadow-sm disabled:opacity-50"
+                            title={t.loadWatchtowerThemes}
+                        >
+                            <BookOpen size={12} className={isLoadingThemes ? "animate-spin" : ""} />
+                            <span>{isLoadingThemes ? t.loadingThemes : t.loadWatchtowerThemes}</span>
+                        </button>
+                    </>
+                )}
             </div>
 
             {/* Template dropdown portal */}
@@ -395,7 +440,15 @@ export const TopToolbar: React.FC<Props> = ({ state, updateState, updateStyle, o
                     ].map(item => (
                         <button
                             key={item.id}
-                            onClick={() => { updateState({ template: item.id as any }); setIsTemplateMenuOpen(false); }}
+                            onClick={async () => {
+                                if (item.id === 'fin-de-semana') {
+                                    const populated = await populateWatchtowerThemesForAllMonths(state.months, state.language, false);
+                                    updateState({ template: item.id as any, months: populated });
+                                } else {
+                                    updateState({ template: item.id as any });
+                                }
+                                setIsTemplateMenuOpen(false);
+                            }}
                             className={`w-full text-left px-4 py-2 text-[13px] flex items-center justify-between gap-2 transition-colors ${state.template === item.id ? 'bg-primary/5 text-primary font-medium' : 'text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800'}`}
                         >
                             <span>{item.label}</span>
