@@ -286,7 +286,7 @@ export const Preview: React.FC<Props> = ({ state, updateState, isGenerating }) =
                                         <table className="w-full" style={{ borderCollapse: 'separate', borderSpacing: 0, width: '100%' }}>
                                             <thead style={{ backgroundColor: '#f8fafc', WebkitPrintColorAdjust: 'exact', printColorAdjust: 'exact' }}>
                                                 <tr>
-                                                    <th className="p-2 text-center w-[15%] text-xs font-semibold tracking-wider text-slate-700" style={{ ...getStyleString(state.styles.header), borderBottom: '1px solid #cbd5e1', borderRight: '1px solid #cbd5e1', boxSizing: 'border-box', WebkitPrintColorAdjust: 'exact', printColorAdjust: 'exact' }}>
+                                                    <th className={`p-2 text-center ${state.template === 'fin-de-semana' ? 'w-[13%]' : 'w-[15%]'} text-xs font-semibold tracking-wider text-slate-700`} style={{ ...getStyleString(state.styles.header), borderBottom: '1px solid #cbd5e1', borderRight: '1px solid #cbd5e1', boxSizing: 'border-box', WebkitPrintColorAdjust: 'exact', printColorAdjust: 'exact' }}>
                                                         {getMonthName(month.monthIndex, state.language).toUpperCase()}
                                                     </th>
                                                     {state.template === 'acomodadores' ? (
@@ -300,8 +300,8 @@ export const Preview: React.FC<Props> = ({ state, updateState, isGenerating }) =
                                                         <th className="p-2 text-center text-xs font-semibold tracking-wider text-slate-700" style={{ ...getStyleString(state.styles.header), borderBottom: '1px solid #cbd5e1', boxSizing: 'border-box', WebkitPrintColorAdjust: 'exact', printColorAdjust: 'exact' }}>{t.assignedGroup}</th>
                                                     ) : (
                                                         <>
-                                                            <th className="p-2 text-center text-xs font-semibold tracking-wider text-slate-700 w-[25%]" style={{ ...getStyleString(state.styles.header), borderBottom: '1px solid #cbd5e1', borderRight: '1px solid #cbd5e1', boxSizing: 'border-box', WebkitPrintColorAdjust: 'exact', printColorAdjust: 'exact' }}>{t.president}</th>
-                                                            <th className="p-2 text-center text-xs font-semibold tracking-wider text-slate-700 w-[45%]" style={{ ...getStyleString(state.styles.header), borderBottom: '1px solid #cbd5e1', borderRight: '1px solid #cbd5e1', boxSizing: 'border-box', WebkitPrintColorAdjust: 'exact', printColorAdjust: 'exact' }}>{t.wtTheme}</th>
+                                                            <th className="p-2 text-center text-xs font-semibold tracking-wider text-slate-700 w-[22%]" style={{ ...getStyleString(state.styles.header), borderBottom: '1px solid #cbd5e1', borderRight: '1px solid #cbd5e1', boxSizing: 'border-box', WebkitPrintColorAdjust: 'exact', printColorAdjust: 'exact' }}>{t.president}</th>
+                                                            <th className="p-2 text-center text-xs font-semibold tracking-wider text-slate-700 w-[50%]" style={{ ...getStyleString(state.styles.header), borderBottom: '1px solid #cbd5e1', borderRight: '1px solid #cbd5e1', boxSizing: 'border-box', WebkitPrintColorAdjust: 'exact', printColorAdjust: 'exact' }}>{t.wtTheme}</th>
                                                             <th className="p-2 text-center text-xs font-semibold tracking-wider text-slate-700 w-[15%]" style={{ ...getStyleString(state.styles.header), borderBottom: '1px solid #cbd5e1', boxSizing: 'border-box', WebkitPrintColorAdjust: 'exact', printColorAdjust: 'exact' }}>{t.reader}</th>
                                                         </>
                                                     )}
@@ -495,10 +495,12 @@ export const Preview: React.FC<Props> = ({ state, updateState, isGenerating }) =
                                                                     </td>
                                                                     <td className="p-0 text-center" style={{ borderBottom: rowBorder, borderRight: '1px solid #cbd5e1', boxSizing: 'border-box' }}>
                                                                         {isGenerating ? (
-                                                                            <span style={{ display: 'block', padding: '0.5rem', color: 'inherit', font: 'inherit' }}>{weekData.wtTheme}</span>
+                                                                            <span style={{ display: 'block', padding: '0.4rem 0.5rem', color: 'inherit', font: 'inherit', lineHeight: 1.25, whiteSpace: 'normal', wordBreak: 'break-word' }}>
+                                                                                {weekData.wtTheme}
+                                                                            </span>
                                                                         ) : (
-                                                                            <input
-                                                                                type="text"
+                                                                            <textarea
+                                                                                rows={1}
                                                                                 value={weekData.wtTheme || ''}
                                                                                 onChange={(e) => {
                                                                                     const newMonths = [...state.months];
@@ -513,8 +515,27 @@ export const Preview: React.FC<Props> = ({ state, updateState, isGenerating }) =
                                                                                         }
                                                                                     }
                                                                                 }}
-                                                                                className="w-full h-full text-center bg-transparent border-none outline-none focus:ring-2 focus:ring-primary/20 hover:bg-black/5 dark:hover:bg-white/5 transition-colors cursor-text"
-                                                                                style={{ padding: '0.5rem', color: 'inherit', font: 'inherit' }}
+                                                                                onInput={(e) => {
+                                                                                    const target = e.target as HTMLTextAreaElement;
+                                                                                    target.style.height = 'auto';
+                                                                                    target.style.height = `${target.scrollHeight}px`;
+                                                                                }}
+                                                                                ref={(el) => {
+                                                                                    if (el) {
+                                                                                        el.style.height = 'auto';
+                                                                                        el.style.height = `${el.scrollHeight}px`;
+                                                                                    }
+                                                                                }}
+                                                                                className="w-full bg-transparent border-none outline-none resize-none overflow-hidden text-center hover:bg-black/5 dark:hover:bg-white/5 transition-colors focus:bg-black/5 dark:focus:bg-white/5 cursor-text block align-middle"
+                                                                                style={{
+                                                                                    padding: '0.4rem 0.5rem',
+                                                                                    color: 'inherit',
+                                                                                    font: 'inherit',
+                                                                                    lineHeight: 1.25,
+                                                                                    whiteSpace: 'normal',
+                                                                                    wordBreak: 'break-word',
+                                                                                    boxSizing: 'border-box'
+                                                                                }}
                                                                             />
                                                                         )}
                                                                     </td>
