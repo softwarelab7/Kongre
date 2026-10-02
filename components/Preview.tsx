@@ -300,9 +300,8 @@ export const Preview: React.FC<Props> = ({ state, updateState, isGenerating }) =
                                                         <th className="p-2 text-center text-xs font-semibold tracking-wider text-slate-700" style={{ ...getStyleString(state.styles.header), borderBottom: '1px solid #cbd5e1', boxSizing: 'border-box', WebkitPrintColorAdjust: 'exact', printColorAdjust: 'exact' }}>{t.assignedGroup}</th>
                                                     ) : (
                                                         <>
-                                                            <th className="p-2 text-center text-xs font-semibold tracking-wider text-slate-700 w-[20%]" style={{ ...getStyleString(state.styles.header), borderBottom: '1px solid #cbd5e1', borderRight: '1px solid #cbd5e1', boxSizing: 'border-box', WebkitPrintColorAdjust: 'exact', printColorAdjust: 'exact' }}>{t.president}</th>
-                                                            <th className="p-2 text-center text-xs font-semibold tracking-wider text-slate-700 w-[20%]" style={{ ...getStyleString(state.styles.header), borderBottom: '1px solid #cbd5e1', borderRight: '1px solid #cbd5e1', boxSizing: 'border-box', WebkitPrintColorAdjust: 'exact', printColorAdjust: 'exact' }}>{t.speaker}</th>
-                                                            <th className="p-2 text-center text-xs font-semibold tracking-wider text-slate-700 w-[30%]" style={{ ...getStyleString(state.styles.header), borderBottom: '1px solid #cbd5e1', borderRight: '1px solid #cbd5e1', boxSizing: 'border-box', WebkitPrintColorAdjust: 'exact', printColorAdjust: 'exact' }}>{t.wtTheme}</th>
+                                                            <th className="p-2 text-center text-xs font-semibold tracking-wider text-slate-700 w-[25%]" style={{ ...getStyleString(state.styles.header), borderBottom: '1px solid #cbd5e1', borderRight: '1px solid #cbd5e1', boxSizing: 'border-box', WebkitPrintColorAdjust: 'exact', printColorAdjust: 'exact' }}>{t.president}</th>
+                                                            <th className="p-2 text-center text-xs font-semibold tracking-wider text-slate-700 w-[45%]" style={{ ...getStyleString(state.styles.header), borderBottom: '1px solid #cbd5e1', borderRight: '1px solid #cbd5e1', boxSizing: 'border-box', WebkitPrintColorAdjust: 'exact', printColorAdjust: 'exact' }}>{t.wtTheme}</th>
                                                             <th className="p-2 text-center text-xs font-semibold tracking-wider text-slate-700 w-[15%]" style={{ ...getStyleString(state.styles.header), borderBottom: '1px solid #cbd5e1', boxSizing: 'border-box', WebkitPrintColorAdjust: 'exact', printColorAdjust: 'exact' }}>{t.reader}</th>
                                                         </>
                                                     )}
@@ -318,7 +317,7 @@ export const Preview: React.FC<Props> = ({ state, updateState, isGenerating }) =
                                                         <tr key={idx} className={`transition-colors hover:bg-slate-100 ${idx % 2 === 0 ? 'bg-white' : 'bg-slate-50'}`} style={{ WebkitPrintColorAdjust: 'exact', printColorAdjust: 'exact' }}>
                                                             <td className="p-2 text-center font-semibold text-slate-800" style={{ borderBottom: rowBorder, borderRight: '1px solid #cbd5e1', boxSizing: 'border-box' }}>{dateStr}</td>
                                                             {weekData.isAssembly ? (
-                                                                <td colSpan={state.template === 'aseo' ? 1 : 4} className="p-0 text-center bg-amber-50/50" style={{ borderBottom: rowBorder, boxSizing: 'border-box', WebkitPrintColorAdjust: 'exact', printColorAdjust: 'exact' }}>
+                                                                <td colSpan={state.template === 'aseo' ? 1 : state.template === 'fin-de-semana' ? 3 : 4} className="p-0 text-center bg-amber-50/50" style={{ borderBottom: rowBorder, boxSizing: 'border-box', WebkitPrintColorAdjust: 'exact', printColorAdjust: 'exact' }}>
                                                                     <div className="flex items-center justify-center w-full h-full p-2 text-sm font-bold text-amber-600 tracking-[0.2em] relative overflow-hidden" style={{ minHeight: '38px' }}>
                                                                         {/* Background pattern for visual flair in assembly rows */}
                                                                         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 10px, #d97706 10px, #d97706 20px)' }}></div>
@@ -496,33 +495,6 @@ export const Preview: React.FC<Props> = ({ state, updateState, isGenerating }) =
                                                                     </td>
                                                                     <td className="p-0 text-center" style={{ borderBottom: rowBorder, borderRight: '1px solid #cbd5e1', boxSizing: 'border-box' }}>
                                                                         {isGenerating ? (
-                                                                            <span style={{ display: 'block', padding: '0.5rem', color: 'inherit', font: 'inherit' }}>{weekData.speaker}</span>
-                                                                        ) : (
-                                                                            <input
-                                                                                type="text"
-                                                                                list="name-suggestions"
-                                                                                value={weekData.speaker || ''}
-                                                                                onBlur={(e) => addName(e.target.value)}
-                                                                                onChange={(e) => {
-                                                                                    const newMonths = [...state.months];
-                                                                                    const mIdx = newMonths.findIndex(m => m.id === month.id);
-                                                                                    if (mIdx >= 0) {
-                                                                                        const newWeeks = [...newMonths[mIdx].weeks];
-                                                                                        const wIdx = newWeeks.findIndex(w => w.id === weekData.id);
-                                                                                        if (wIdx >= 0) {
-                                                                                            newWeeks[wIdx] = { ...newWeeks[wIdx], speaker: e.target.value };
-                                                                                            newMonths[mIdx] = { ...newMonths[mIdx], weeks: newWeeks };
-                                                                                            updateState({ months: newMonths });
-                                                                                        }
-                                                                                    }
-                                                                                }}
-                                                                                className="w-full h-full text-center bg-transparent border-none outline-none focus:ring-2 focus:ring-primary/20 hover:bg-black/5 dark:hover:bg-white/5 transition-colors cursor-text"
-                                                                                style={{ padding: '0.5rem', color: 'inherit', font: 'inherit' }}
-                                                                            />
-                                                                        )}
-                                                                    </td>
-                                                                    <td className="p-0 text-center" style={{ borderBottom: rowBorder, borderRight: '1px solid #cbd5e1', boxSizing: 'border-box' }}>
-                                                                        {isGenerating ? (
                                                                             <span style={{ display: 'block', padding: '0.5rem', color: 'inherit', font: 'inherit' }}>{weekData.wtTheme}</span>
                                                                         ) : (
                                                                             <input
@@ -579,7 +551,7 @@ export const Preview: React.FC<Props> = ({ state, updateState, isGenerating }) =
                                                     );
                                                 }) : (
                                                     <tr>
-                                                        <td colSpan={state.template === 'aseo' ? 2 : 5} className="p-6 text-center" style={{ borderTop: '1px solid #cbd5e1', WebkitPrintColorAdjust: 'exact', printColorAdjust: 'exact' }}>
+                                                        <td colSpan={state.template === 'aseo' ? 2 : state.template === 'fin-de-semana' ? 4 : 5} className="p-6 text-center" style={{ borderTop: '1px solid #cbd5e1', WebkitPrintColorAdjust: 'exact', printColorAdjust: 'exact' }}>
                                                             <div className="flex flex-col items-center justify-center gap-2">
                                                                 <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center mb-1">
                                                                     <CalendarDays size={18} className="text-slate-500" />

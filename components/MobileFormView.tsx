@@ -331,16 +331,7 @@ export const MobileFormView: React.FC<Props> = ({ state, updateState }) => {
                                                                     onBlur={(e) => addName(e.target.value)}
                                                                     className="w-full bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg p-3 text-base text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:ring-2 focus:ring-primary/20 outline-none" placeholder="Nombre..."
                                                                 />
-                                                            </div>
-                                                            <div className="flex flex-col">
-                                                                <label className="text-[10px] font-bold text-zinc-500 uppercase mb-1">{t.speaker}</label>
-                                                                <input
-                                                                    type="text" list="name-suggestions" value={week.speaker || ''}
-                                                                    onChange={(e) => updateWeekField(month.id, week.id, 'speaker', e.target.value)}
-                                                                    onBlur={(e) => addName(e.target.value)}
-                                                                    className="w-full bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg p-3 text-base text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:ring-2 focus:ring-primary/20 outline-none" placeholder="Nombre..."
-                                                                />
-                                                            </div>
+                                                             </div>
                                                             <div className="flex flex-col">
                                                                 <label className="text-[10px] font-bold text-zinc-500 uppercase mb-1">{t.wtTheme}</label>
                                                                 <input
