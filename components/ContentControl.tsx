@@ -65,7 +65,7 @@ export const ContentControl: React.FC<Props> = ({ state, updateState }) => {
   const handleAddMonth = () => {
     const currentBanner = state.banners?.[state.template] || { image: null, zoom: 1, x: 0, y: 0, showBanner: true };
     const maxMonths = currentBanner.showBanner === false ? 4 : 3;
-    if ((state.template === 'acomodadores' || state.template === 'fin-de-semana') && state.months.length >= maxMonths) {
+    if ((state.template === 'acomodadores' || state.template === 'fin-de-semana' || state.template === 'audio-video') && state.months.length >= maxMonths) {
       return;
     }
 
@@ -99,7 +99,8 @@ export const ContentControl: React.FC<Props> = ({ state, updateState }) => {
         president: '',
         speaker: '',
         wtTheme: '',
-        reader: ''
+        reader: '',
+        audioVideo: ''
       }))
     };
 
@@ -158,7 +159,8 @@ export const ContentControl: React.FC<Props> = ({ state, updateState }) => {
       president: '',
       speaker: '',
       wtTheme: '',
-      reader: ''
+      reader: '',
+      audioVideo: ''
     };
     updateMonth(monthId, { weeks: [...month.weeks, newWeek] });
   };
@@ -195,7 +197,8 @@ export const ContentControl: React.FC<Props> = ({ state, updateState }) => {
               options={[
                 { value: 'acomodadores', label: t.templateUshers },
                 { value: 'aseo', label: t.templateCleaning },
-                { value: 'fin-de-semana', label: t.templateWeekend }
+                { value: 'fin-de-semana', label: t.templateWeekend },
+                { value: 'audio-video', label: t.templateAudioVideo }
               ]}
               value={state.template}
               onChange={(value) => updateState({ template: value as TemplateType })}
@@ -414,7 +417,7 @@ export const ContentControl: React.FC<Props> = ({ state, updateState }) => {
             {(() => {
               const currentBanner = state.banners?.[state.template] || { image: null, zoom: 1, x: 0, y: 0, showBanner: true };
               const maxMonths = currentBanner.showBanner === false ? 4 : 3;
-              const isLimitReached = (state.template === 'acomodadores' || state.template === 'fin-de-semana') && state.months.length >= maxMonths;
+              const isLimitReached = (state.template === 'acomodadores' || state.template === 'fin-de-semana' || state.template === 'audio-video') && state.months.length >= maxMonths;
               
               return (
                 <>

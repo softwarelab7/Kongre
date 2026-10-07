@@ -94,7 +94,7 @@ export const TopToolbar: React.FC<Props> = ({ state, updateState, updateStyle, o
     const addWeek = (monthId: string) => {
         const month = state.months.find(m => m.id === monthId);
         if (!month) return;
-        updateMonth(monthId, { weeks: [...month.weeks, { id: crypto.randomUUID(), door: '', auditorium: '', mic1: '', mic2: '', group: '', president: '', speaker: '', wtTheme: '', reader: '' }] });
+        updateMonth(monthId, { weeks: [...month.weeks, { id: crypto.randomUUID(), door: '', auditorium: '', mic1: '', mic2: '', group: '', president: '', speaker: '', wtTheme: '', reader: '', audioVideo: '' }] });
     };
 
     const removeWeek = (monthId: string, weekId: string) => {
@@ -166,7 +166,7 @@ export const TopToolbar: React.FC<Props> = ({ state, updateState, updateStyle, o
     const handleAddMonth = async () => {
         const currentBanner = state.banners?.[state.template] || { image: null, zoom: 1, x: 0, y: 0, showBanner: true };
         const maxMonths = currentBanner.showBanner === false ? 4 : 3;
-        if ((state.template === 'acomodadores' || state.template === 'fin-de-semana') && state.months.length >= maxMonths) {
+        if ((state.template === 'acomodadores' || state.template === 'fin-de-semana' || state.template === 'audio-video') && state.months.length >= maxMonths) {
             alert(t.maxMonthsAcomodadoresLimit || "Límite alcanzado");
             return;
         }
@@ -193,7 +193,8 @@ export const TopToolbar: React.FC<Props> = ({ state, updateState, updateStyle, o
             weeks: Array.from({ length: 5 }).map(() => ({
                 id: crypto.randomUUID(),
                 door: '', auditorium: '', mic1: '', mic2: '', group: '',
-                president: '', speaker: '', wtTheme: '', reader: ''
+                president: '', speaker: '', wtTheme: '', reader: '',
+                audioVideo: ''
             }))
         };
 
@@ -234,7 +235,7 @@ export const TopToolbar: React.FC<Props> = ({ state, updateState, updateStyle, o
                 >
                     <LayoutTemplate size={14} className="text-zinc-400 shrink-0" />
                     <span className="hidden lg:block max-w-[80px] xl:max-w-[100px] truncate text-[11px] xl:text-[12px]">
-                        {state.template === 'acomodadores' ? t.templateUshers : state.template === 'aseo' ? t.templateCleaning : t.templateWeekend}
+                        {state.template === 'acomodadores' ? t.templateUshers : state.template === 'aseo' ? t.templateCleaning : state.template === 'fin-de-semana' ? t.templateWeekend : t.templateAudioVideo}
                     </span>
                     <ChevronDown size={12} className={`text-zinc-400 transition-transform duration-200 ${isTemplateMenuOpen ? 'rotate-180' : ''}`} />
                 </button>
@@ -402,7 +403,7 @@ export const TopToolbar: React.FC<Props> = ({ state, updateState, updateStyle, o
                 {/* Add Month Button natively within the segmented control */}
                 <button
                     onClick={handleAddMonth}
-                    disabled={state.template === 'acomodadores' && state.months.length >= ((state.banners?.[state.template]?.showBanner === false) ? 4 : 3)}
+                    disabled={(state.template === 'acomodadores' || state.template === 'fin-de-semana' || state.template === 'audio-video') && state.months.length >= ((state.banners?.[state.template]?.showBanner === false) ? 4 : 3)}
                     className="flex items-center gap-1 h-7 px-2.5 bg-zinc-200/60 hover:bg-zinc-200 dark:bg-zinc-800/80 dark:hover:bg-zinc-700 text-zinc-600 dark:text-zinc-300 font-bold text-[10px] uppercase rounded border border-dashed border-zinc-300 dark:border-zinc-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed shrink-0 shadow-sm"
                     title={t.createNewMonth || "Añadir Mes"}
                 >
@@ -437,6 +438,7 @@ export const TopToolbar: React.FC<Props> = ({ state, updateState, updateStyle, o
                         { id: 'acomodadores', label: t.templateUshers },
                         { id: 'aseo', label: t.templateCleaning },
                         { id: 'fin-de-semana', label: t.templateWeekend },
+                        { id: 'audio-video', label: t.templateAudioVideo },
                     ].map(item => (
                         <button
                             key={item.id}

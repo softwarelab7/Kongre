@@ -192,7 +192,7 @@ export const Preview: React.FC<Props> = ({ state, updateState, isGenerating }) =
                                 }}
                                 className="pointer-events-auto inline-block"
                             >
-                                {state.styles.documentTitle || (state.template === 'acomodadores' ? t.previewTitleUshers : state.template === 'aseo' ? t.previewTitleCleaning : t.previewTitleWeekend)}
+                                {state.styles.documentTitle || (state.template === 'acomodadores' ? t.previewTitleUshers : state.template === 'aseo' ? t.previewTitleCleaning : state.template === 'fin-de-semana' ? t.previewTitleWeekend : t.previewTitleAudioVideo)}
                             </h2>
                         ) : (
                             <input
@@ -211,7 +211,7 @@ export const Preview: React.FC<Props> = ({ state, updateState, isGenerating }) =
                                     width: '100%',
                                 }}
                                 className="pointer-events-auto inline-block hover:bg-black/5 dark:hover:bg-white/5 transition-colors focus:bg-black/5 dark:focus:bg-white/5 rounded px-2"
-                                value={state.styles.documentTitle ?? (state.template === 'acomodadores' ? t.previewTitleUshers : state.template === 'aseo' ? t.previewTitleCleaning : t.previewTitleWeekend)}
+                                value={state.styles.documentTitle ?? (state.template === 'acomodadores' ? t.previewTitleUshers : state.template === 'aseo' ? t.previewTitleCleaning : state.template === 'fin-de-semana' ? t.previewTitleWeekend : t.previewTitleAudioVideo)}
                                 onChange={(e) => updateState({ styles: { ...state.styles, documentTitle: e.target.value } })}
                             />
                         )}
@@ -286,7 +286,7 @@ export const Preview: React.FC<Props> = ({ state, updateState, isGenerating }) =
                                         <table className="w-full" style={{ borderCollapse: 'separate', borderSpacing: 0, width: '100%' }}>
                                             <thead style={{ backgroundColor: '#f8fafc', WebkitPrintColorAdjust: 'exact', printColorAdjust: 'exact' }}>
                                                 <tr>
-                                                    <th className={`p-2 text-center ${state.template === 'fin-de-semana' ? 'w-[13%]' : 'w-[15%]'} text-xs font-semibold tracking-wider text-slate-700`} style={{ ...getStyleString(state.styles.header), borderBottom: '1px solid #cbd5e1', borderRight: '1px solid #cbd5e1', boxSizing: 'border-box', WebkitPrintColorAdjust: 'exact', printColorAdjust: 'exact' }}>
+                                                    <th className={`p-2 text-center ${state.template === 'fin-de-semana' ? 'w-[13%]' : state.template === 'audio-video' || state.template === 'aseo' ? 'w-[20%]' : 'w-[15%]'} text-xs font-semibold tracking-wider text-slate-700`} style={{ ...getStyleString(state.styles.header), borderBottom: '1px solid #cbd5e1', borderRight: '1px solid #cbd5e1', boxSizing: 'border-box', WebkitPrintColorAdjust: 'exact', printColorAdjust: 'exact' }}>
                                                         {getMonthName(month.monthIndex, state.language).toUpperCase()}
                                                     </th>
                                                     {state.template === 'acomodadores' ? (
@@ -298,6 +298,8 @@ export const Preview: React.FC<Props> = ({ state, updateState, isGenerating }) =
                                                         </>
                                                     ) : state.template === 'aseo' ? (
                                                         <th className="p-2 text-center text-xs font-semibold tracking-wider text-slate-700" style={{ ...getStyleString(state.styles.header), borderBottom: '1px solid #cbd5e1', boxSizing: 'border-box', WebkitPrintColorAdjust: 'exact', printColorAdjust: 'exact' }}>{t.assignedGroup}</th>
+                                                    ) : state.template === 'audio-video' ? (
+                                                        <th className="p-2 text-center text-xs font-semibold tracking-wider text-slate-700" style={{ ...getStyleString(state.styles.header), borderBottom: '1px solid #cbd5e1', boxSizing: 'border-box', WebkitPrintColorAdjust: 'exact', printColorAdjust: 'exact' }}>{t.responsible}</th>
                                                     ) : (
                                                         <>
                                                             <th className="p-2 text-center text-xs font-semibold tracking-wider text-slate-700 w-[22%]" style={{ ...getStyleString(state.styles.header), borderBottom: '1px solid #cbd5e1', borderRight: '1px solid #cbd5e1', boxSizing: 'border-box', WebkitPrintColorAdjust: 'exact', printColorAdjust: 'exact' }}>{t.president}</th>
@@ -309,7 +311,7 @@ export const Preview: React.FC<Props> = ({ state, updateState, isGenerating }) =
                                             </thead>
                                             <tbody style={getStyleString(state.styles.cell)}>
                                                 {dates.length > 0 ? dates.map((dateStr, idx) => {
-                                                    const weekData = month.weeks[idx] || { id: '', door: '', auditorium: '', mic1: '', mic2: '', group: '' };
+                                                    const weekData = month.weeks[idx] || { id: '', door: '', auditorium: '', mic1: '', mic2: '', group: '', audioVideo: '' };
                                                     const isLastRow = idx === dates.length - 1;
                                                     const rowBorder = isLastRow ? 'none' : '1px solid #cbd5e1';
 
@@ -317,7 +319,7 @@ export const Preview: React.FC<Props> = ({ state, updateState, isGenerating }) =
                                                         <tr key={idx} className={`transition-colors hover:bg-slate-100 ${idx % 2 === 0 ? 'bg-white' : 'bg-slate-50'}`} style={{ WebkitPrintColorAdjust: 'exact', printColorAdjust: 'exact' }}>
                                                             <td className="p-2 text-center font-semibold text-slate-800" style={{ borderBottom: rowBorder, borderRight: '1px solid #cbd5e1', boxSizing: 'border-box' }}>{dateStr}</td>
                                                             {weekData.isAssembly ? (
-                                                                <td colSpan={state.template === 'aseo' ? 1 : state.template === 'fin-de-semana' ? 3 : 4} className="p-0 text-center bg-amber-50/50" style={{ borderBottom: rowBorder, boxSizing: 'border-box', WebkitPrintColorAdjust: 'exact', printColorAdjust: 'exact' }}>
+                                                                <td colSpan={state.template === 'aseo' || state.template === 'audio-video' ? 1 : state.template === 'fin-de-semana' ? 3 : 4} className="p-0 text-center bg-amber-50/50" style={{ borderBottom: rowBorder, boxSizing: 'border-box', WebkitPrintColorAdjust: 'exact', printColorAdjust: 'exact' }}>
                                                                     <div className="flex items-center justify-center w-full h-full p-2 text-sm font-bold text-amber-600 tracking-[0.2em] relative overflow-hidden" style={{ minHeight: '38px' }}>
                                                                         {/* Background pattern for visual flair in assembly rows */}
                                                                         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 10px, #d97706 10px, #d97706 20px)' }}></div>
@@ -464,6 +466,35 @@ export const Preview: React.FC<Props> = ({ state, updateState, isGenerating }) =
                                                                         />
                                                                     )}
                                                                 </td>
+                                                            ) : state.template === 'audio-video' ? (
+                                                                <td className="p-0 text-center" style={{ borderBottom: rowBorder, boxSizing: 'border-box' }}>
+                                                                    {isGenerating ? (
+                                                                        <span style={{ display: 'block', padding: '0.5rem', color: 'inherit', font: 'inherit' }}>{weekData.audioVideo}</span>
+                                                                    ) : (
+                                                                        <input
+                                                                            type="text"
+                                                                            list="name-suggestions"
+                                                                            value={weekData.audioVideo || ''}
+                                                                            onBlur={(e) => addName(e.target.value)}
+                                                                            onChange={(e) => {
+                                                                                const newMonths = [...state.months];
+                                                                                const mIdx = newMonths.findIndex(m => m.id === month.id);
+                                                                                if (mIdx >= 0) {
+                                                                                    const newWeeks = [...newMonths[mIdx].weeks];
+                                                                                    const wIdx = newWeeks.findIndex(w => w.id === weekData.id);
+                                                                                    if (wIdx >= 0) {
+                                                                                        newWeeks[wIdx] = { ...newWeeks[wIdx], audioVideo: e.target.value };
+                                                                                        newMonths[mIdx] = { ...newMonths[mIdx], weeks: newWeeks };
+                                                                                        updateState({ months: newMonths });
+                                                                                    }
+                                                                                }
+                                                                            }}
+                                                                            className="w-full h-full text-center bg-transparent border-none outline-none focus:ring-2 focus:ring-primary/20 hover:bg-black/5 dark:hover:bg-white/5 transition-colors cursor-text"
+                                                                            style={{ padding: '0.5rem', color: 'inherit', font: 'inherit' }}
+                                                                            placeholder="Nombre..."
+                                                                        />
+                                                                    )}
+                                                                </td>
                                                             ) : (
                                                                 <>
                                                                     <td className="p-0 text-center" style={{ borderBottom: rowBorder, borderRight: '1px solid #cbd5e1', boxSizing: 'border-box' }}>
@@ -572,7 +603,7 @@ export const Preview: React.FC<Props> = ({ state, updateState, isGenerating }) =
                                                     );
                                                 }) : (
                                                     <tr>
-                                                        <td colSpan={state.template === 'aseo' ? 2 : state.template === 'fin-de-semana' ? 4 : 5} className="p-6 text-center" style={{ borderTop: '1px solid #cbd5e1', WebkitPrintColorAdjust: 'exact', printColorAdjust: 'exact' }}>
+                                                        <td colSpan={state.template === 'aseo' || state.template === 'audio-video' ? 2 : state.template === 'fin-de-semana' ? 4 : 5} className="p-6 text-center" style={{ borderTop: '1px solid #cbd5e1', WebkitPrintColorAdjust: 'exact', printColorAdjust: 'exact' }}>
                                                             <div className="flex flex-col items-center justify-center gap-2">
                                                                 <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center mb-1">
                                                                     <CalendarDays size={18} className="text-slate-500" />

@@ -44,7 +44,7 @@ export const MobileFormView: React.FC<Props> = ({ state, updateState }) => {
     const handleAddMonth = async () => {
         const currentBanner = state.banners?.[state.template] || { image: null, zoom: 1, x: 0, y: 0, showBanner: true };
         const maxMonths = currentBanner.showBanner === false ? 4 : 3;
-        if ((state.template === 'acomodadores' || state.template === 'fin-de-semana') && state.months.length >= maxMonths) return;
+        if ((state.template === 'acomodadores' || state.template === 'fin-de-semana' || state.template === 'audio-video') && state.months.length >= maxMonths) return;
 
         let nextYear = new Date().getFullYear();
         let nextMonthIndex = new Date().getMonth();
@@ -67,7 +67,8 @@ export const MobileFormView: React.FC<Props> = ({ state, updateState }) => {
             weeks: Array.from({ length: 5 }).map(() => ({
                 id: crypto.randomUUID(),
                 door: '', auditorium: '', mic1: '', mic2: '', group: '',
-                president: '', speaker: '', wtTheme: '', reader: ''
+                president: '', speaker: '', wtTheme: '', reader: '',
+                audioVideo: ''
             }))
         };
 
@@ -105,7 +106,7 @@ export const MobileFormView: React.FC<Props> = ({ state, updateState }) => {
         const month = state.months.find(m => m.id === monthId);
         if (!month) return;
         updateMonth(monthId, {
-            weeks: [...month.weeks, { id: crypto.randomUUID(), door: '', auditorium: '', mic1: '', mic2: '', group: '', president: '', speaker: '', wtTheme: '', reader: '' }]
+            weeks: [...month.weeks, { id: crypto.randomUUID(), door: '', auditorium: '', mic1: '', mic2: '', group: '', president: '', speaker: '', wtTheme: '', reader: '', audioVideo: '' }]
         });
     };
 
@@ -137,7 +138,7 @@ export const MobileFormView: React.FC<Props> = ({ state, updateState }) => {
                     <label className="block text-xs font-bold text-zinc-500 uppercase mb-2">Título del PDF</label>
                     <input
                         type="text"
-                        value={state.styles.documentTitle ?? (state.template === 'acomodadores' ? t.previewTitleUshers : state.template === 'aseo' ? t.previewTitleCleaning : t.previewTitleWeekend)}
+                        value={state.styles.documentTitle ?? (state.template === 'acomodadores' ? t.previewTitleUshers : state.template === 'aseo' ? t.previewTitleCleaning : state.template === 'fin-de-semana' ? t.previewTitleWeekend : t.previewTitleAudioVideo)}
                         onChange={(e) => updateState({ styles: { ...state.styles, documentTitle: e.target.value } })}
                         className="w-full bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl p-3 text-base text-zinc-900 dark:text-zinc-100"
                         placeholder="Programa de..."
@@ -321,6 +322,16 @@ export const MobileFormView: React.FC<Props> = ({ state, updateState }) => {
                                                                 className="w-full bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg p-3 text-base text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:ring-2 focus:ring-primary/20 outline-none" placeholder="Grupo..."
                                                             />
                                                         </div>
+                                                    ) : state.template === 'audio-video' ? (
+                                                        <div className="flex flex-col">
+                                                            <label className="text-[10px] font-bold text-zinc-500 uppercase mb-1">{t.responsible}</label>
+                                                            <input
+                                                                type="text" list="name-suggestions" value={week.audioVideo || ''}
+                                                                onChange={(e) => updateWeekField(month.id, week.id, 'audioVideo', e.target.value)}
+                                                                onBlur={(e) => addName(e.target.value)}
+                                                                className="w-full bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg p-3 text-base text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:ring-2 focus:ring-primary/20 outline-none" placeholder="Nombre..."
+                                                            />
+                                                        </div>
                                                     ) : (
                                                         <>
                                                             <div className="flex flex-col">
@@ -367,7 +378,7 @@ export const MobileFormView: React.FC<Props> = ({ state, updateState }) => {
             {/* Add Month Button */}
             <button
                 onClick={handleAddMonth}
-                disabled={(state.template === 'acomodadores' || state.template === 'fin-de-semana') && state.months.length >= ((state.banners?.[state.template]?.showBanner === false) ? 4 : 3)}
+                disabled={(state.template === 'acomodadores' || state.template === 'fin-de-semana' || state.template === 'audio-video') && state.months.length >= ((state.banners?.[state.template]?.showBanner === false) ? 4 : 3)}
                 className="w-full py-4 rounded-2xl border-2 border-dashed border-zinc-300 dark:border-zinc-700 text-zinc-500 dark:text-zinc-400 font-bold flex items-center justify-center gap-2 disabled:opacity-50 active:bg-zinc-50 dark:active:bg-zinc-800"
             >
                 <Plus size={20} />

@@ -25,7 +25,8 @@ export default function App() {
     const defaultBanners = { 
       acomodadores: { ...initialBanner }, 
       aseo: { ...initialBanner },
-      'fin-de-semana': { ...initialBanner }
+      'fin-de-semana': { ...initialBanner },
+      'audio-video': { ...initialBanner }
     };
 
     const saved = typeof window !== 'undefined' ? localStorage.getItem('HUB_TEOCRATICO_STATE_V1') : null;
@@ -38,7 +39,8 @@ export default function App() {
           parsed.banners = { 
             acomodadores: { ...parsed.banner }, 
             aseo: { ...initialBanner },
-            'fin-de-semana': { ...initialBanner }
+            'fin-de-semana': { ...initialBanner },
+            'audio-video': { ...initialBanner }
           };
           delete parsed.banner;
         }
@@ -111,7 +113,8 @@ export default function App() {
         weeks: Array.from({ length: 5 }).map(() => ({
           id: crypto.randomUUID(),
           door: '', auditorium: '', mic1: '', mic2: '', group: '',
-          president: '', speaker: '', wtTheme: '', reader: ''
+          president: '', speaker: '', wtTheme: '', reader: '',
+          audioVideo: ''
         }))
       };
       if (state.template === 'fin-de-semana') {
@@ -178,7 +181,8 @@ export default function App() {
         const currentBanners = prev.banners || { 
           acomodadores: { image: null, zoom: 1, x: 0, y: 0, showBanner: true }, 
           aseo: { image: null, zoom: 1, x: 0, y: 0, showBanner: true },
-          'fin-de-semana': { image: null, zoom: 1, x: 0, y: 0, showBanner: true }
+          'fin-de-semana': { image: null, zoom: 1, x: 0, y: 0, showBanner: true },
+          'audio-video': { image: null, zoom: 1, x: 0, y: 0, showBanner: true }
         };
         finalUpdates.banners = {
           ...currentBanners,
@@ -192,7 +196,7 @@ export default function App() {
       const currentBannerState = newState.banners?.[newState.template] || { image: null, zoom: 1, x: 0, y: 0, showBanner: true };
       const maxMonths = currentBannerState.showBanner === false ? 4 : 3;
 
-      if ((newState.template === 'acomodadores' || newState.template === 'fin-de-semana') && newState.months.length > maxMonths) {
+      if ((newState.template === 'acomodadores' || newState.template === 'fin-de-semana' || newState.template === 'audio-video') && newState.months.length > maxMonths) {
         newState.months = newState.months.slice(0, maxMonths);
       }
       return newState;
@@ -221,14 +225,16 @@ export default function App() {
         weeks: Array.from({ length: 5 }).map(() => ({
           id: crypto.randomUUID(),
           door: '', auditorium: '', mic1: '', mic2: '', group: '',
-          president: '', speaker: '', wtTheme: '', reader: ''
+          president: '', speaker: '', wtTheme: '', reader: '',
+          audioVideo: ''
         }))
       }],
       styles: INITIAL_STYLES,
       banners: { 
         acomodadores: { ...initialBanner }, 
         aseo: { ...initialBanner },
-        'fin-de-semana': { ...initialBanner }
+        'fin-de-semana': { ...initialBanner },
+        'audio-video': { ...initialBanner }
       },
       language: 'es',
       theme: typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light',

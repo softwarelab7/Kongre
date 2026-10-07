@@ -1,9 +1,17 @@
 # Estado del Proyecto: Hub Teocrático JW
 
-**Fecha:** 31 de Marzo de 2026
-**Última acción:** Finalización de Exportación PDF Perfecta (Hoja Única).
+**Fecha:** 7 de Octubre de 2026
+**Última acción:** Implementación de Nueva Plantilla: Audio y Video.
 
 ## ✅ Tareas Completadas Recientemente:
+
+### 📅 7 de Octubre de 2026:
+1.  **Nueva Plantilla de Audio y Video:**
+    *   **Configuración:** Creado el tipo de plantilla `'audio-video'` con soporte para banner independiente, límites de páginas y persistencia en almacenamiento local.
+    *   **Columna Responsable:** Integrada la columna **RESPONSABLE** para el departamento unificado de Audio y Video.
+    *   **Vistas Adaptativas:** Añadido soporte tanto en la barra superior (`TopToolbar`), el panel de control lateral (`ContentControl`), la vista móvil (`MobileFormView`) y la vista previa interactiva/imprimible (`Preview`).
+    *   **Internacionalización Completa:** Traducciones añadidas para todos los idiomas soportados (es, en, pt, fr, it, ru, pl).
+    *   **Compilación Verificada:** Construcción exitosa del bundle de producción sin errores de tipos.
 
 ### 📅 31 de Marzo de 2026:
 1.  **Solución Definitiva de Exportación PDF (Ventana Emergente + Zoom):**
